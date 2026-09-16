@@ -44,18 +44,6 @@ final class ScreenshotImportService {
         NSLog("Shot2Photos: Monitoring %@", directoryURL.path)
     }
 
-    func requestPhotoLibraryAuthorization() async -> PHAuthorizationStatus {
-        let status = await photoLibraryAuthorization()
-        NSLog(
-            "Shot2Photos: Photos authorization result addOnly=%@",
-            String(describing: status)
-        )
-        if status != .authorized && status != .limited {
-            NSLog("Shot2Photos: Photos access was not authorized: %@", String(describing: status))
-        }
-        return status
-    }
-
     private func screenshotDirectoryURL() -> URL? {
         if let configuredLocation = UserDefaults(suiteName: "com.apple.screencapture")?
             .string(forKey: "location"),
@@ -244,32 +232,30 @@ final class ScreenshotImportService {
     private func importIntoPhotos(_ url: URL) async -> Bool {
         let authorization = await photoLibraryAuthorization()
         guard authorization == .authorized || authorization == .limited else {
+            NSLog("Shot2Photos: Photos access was not authorized: %@", String(describing: authorization))
             return false
         }
 
-        return await withCheckedContinuation { continuation in
-            PHPhotoLibrary.shared().performChanges({
-                _ = PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: url)
-            }, completionHandler: { success, error in
-                if let error {
-                    NSLog("Shot2Photos: Photos import failed: %@", error.localizedDescription)
-                }
-                continuation.resume(returning: success)
-            })
+        do {
+            try await PHPhotoLibrary.shared().performChanges {
+                let request = PHAssetCreationRequest.forAsset()
+                request.addResource(with: .photo, fileURL: url, options: nil)
+            }
+            NSLog("Shot2Photos: Photos import succeeded")
+            return true
+        } catch {
+            NSLog("Shot2Photos: Photos import failed: %@", error.localizedDescription)
+            return false
         }
     }
 
     private func photoLibraryAuthorization() async -> PHAuthorizationStatus {
-        let status = PHPhotoLibrary.authorizationStatus(for: .addOnly)
+        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
         guard status == .notDetermined else {
             return status
         }
 
-        return await withCheckedContinuation { continuation in
-            PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
-                continuation.resume(returning: status)
-            }
-        }
+        return await PHPhotoLibrary.requestAuthorization(for: .readWrite)
     }
 
     private func requestNotificationAuthorization() {

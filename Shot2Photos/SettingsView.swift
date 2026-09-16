@@ -4,6 +4,7 @@
 
 import OSLog
 import Photos
+import ServiceManagement
 import SwiftUI
 import UserNotifications
 
@@ -18,11 +19,31 @@ struct SettingsView: View {
 
     @Environment(\.openURL) private var openURL
     @AppStorage("removeSourceAfterImport") private var removeSourceAfterImport = false
-    @State private var photoAuthorization = PHPhotoLibrary.authorizationStatus(for: .addOnly)
+    @State private var launchAtLoginStatus = SMAppService.mainApp.status
+    @State private var photoAuthorization = PHPhotoLibrary.authorizationStatus(for: .readWrite)
     @State private var notificationAuthorization: UNAuthorizationStatus = .notDetermined
 
     var body: some View {
         Form {
+            Section("General") {
+                Toggle(
+                    "Launch at login",
+                    isOn: Binding(
+                        get: {
+                            launchAtLoginStatus == .enabled
+                                || launchAtLoginStatus == .requiresApproval
+                        },
+                        set: updateLaunchAtLogin
+                    )
+                )
+
+                if launchAtLoginStatus == .requiresApproval {
+                    Text("Approval is required in System Settings → General → Login Items.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+
             Section("Import") {
                 Toggle(
                     "Move originals to Trash after successful import",
@@ -72,6 +93,7 @@ struct SettingsView: View {
         .frame(width: 460)
         .onAppear {
             settingsLogger.info("SettingsView appeared")
+            refreshLaunchAtLoginStatus()
             refreshStatus()
         }
         .task {
@@ -94,6 +116,24 @@ struct SettingsView: View {
 
     private var appBuild: String {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—"
+    }
+
+    private func updateLaunchAtLogin(_ enabled: Bool) {
+        do {
+            if enabled {
+                try SMAppService.mainApp.register()
+            } else {
+                try SMAppService.mainApp.unregister()
+            }
+        } catch {
+            settingsLogger.error("Unable to update launch at login: \(error.localizedDescription, privacy: .public)")
+        }
+
+        refreshLaunchAtLoginStatus()
+    }
+
+    private func refreshLaunchAtLoginStatus() {
+        launchAtLoginStatus = SMAppService.mainApp.status
     }
 
     private var photoStatusText: String {
@@ -130,18 +170,30 @@ struct SettingsView: View {
 
     private func requestPhotoAccess() {
         Task {
-            photoAuthorization = await service.requestPhotoLibraryAuthorization()
+            let before = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+            settingsLogger.info(
+                "Photos request before=\(before.rawValue, privacy: .public), bundleID=\(Bundle.main.bundleIdentifier ?? "nil", privacy: .public)"
+            )
+
+            let result = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
+            let after = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+
+            settingsLogger.info(
+                "Photos request result=\(result.rawValue, privacy: .public), after=\(after.rawValue, privacy: .public)"
+            )
+
+            photoAuthorization = after
         }
     }
 
     private func refreshStatus() {
-        let addOnlyStatus = PHPhotoLibrary.authorizationStatus(for: .addOnly)
+        let readWriteStatus = PHPhotoLibrary.authorizationStatus(for: .readWrite)
 
         settingsLogger.info(
-            "Photos authorization refresh: addOnly=\(String(describing: addOnlyStatus), privacy: .public), bundleID=\(Bundle.main.bundleIdentifier ?? "nil", privacy: .public)"
+            "Photos authorization refresh: readWrite=\(String(describing: readWriteStatus), privacy: .public), bundleID=\(Bundle.main.bundleIdentifier ?? "nil", privacy: .public)"
         )
 
-        photoAuthorization = addOnlyStatus
+        photoAuthorization = readWriteStatus
 
         Task {
             notificationAuthorization = await currentNotificationAuthorization()
