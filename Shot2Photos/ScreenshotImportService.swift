@@ -130,10 +130,12 @@ final class ScreenshotImportService {
 
         for url in urls {
             let path = url.standardizedFileURL.path
-            guard !initialPaths.contains(path),
-                  !processingPaths.contains(path),
-                  !processedPaths.contains(path),
-                  isSupportedImage(url) else {
+            guard Self.shouldProcess(
+                url: url,
+                initialPaths: initialPaths,
+                processingPaths: processingPaths,
+                processedPaths: processedPaths
+            ) else {
                 continue
             }
 
@@ -144,7 +146,20 @@ final class ScreenshotImportService {
         }
     }
 
-    private func isSupportedImage(_ url: URL) -> Bool {
+    nonisolated static func shouldProcess(
+        url: URL,
+        initialPaths: Set<String>,
+        processingPaths: Set<String>,
+        processedPaths: Set<String>
+    ) -> Bool {
+        let path = url.standardizedFileURL.path
+        return !initialPaths.contains(path)
+            && !processingPaths.contains(path)
+            && !processedPaths.contains(path)
+            && isSupportedImage(url)
+    }
+
+    nonisolated static func isSupportedImage(_ url: URL) -> Bool {
         guard let type = UTType(filenameExtension: url.pathExtension) else {
             return false
         }

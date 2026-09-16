@@ -62,10 +62,14 @@ struct SettingsView: View {
                         .foregroundStyle(service.isMonitoring ? Color.secondary : Color.red)
                 }
             }
+
+            Section("About") {
+                LabeledContent("Version", value: appVersion)
+                LabeledContent("Build", value: appBuild)
+            }
         }
         .formStyle(.grouped)
         .frame(width: 460)
-        .padding()
         .onAppear {
             settingsLogger.info("SettingsView appeared")
             refreshStatus()
@@ -82,6 +86,14 @@ struct SettingsView: View {
     private var notificationAccessIsAvailable: Bool {
         notificationAuthorization == .authorized
             || notificationAuthorization == .provisional
+    }
+
+    private var appVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—"
+    }
+
+    private var appBuild: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—"
     }
 
     private var photoStatusText: String {
