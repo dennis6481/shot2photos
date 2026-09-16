@@ -16,6 +16,11 @@
 			path = Shot2Photos;
 			sourceTree = "<group>";
 		};
+		B5666B09305AB98E0048B1BE /* docs */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = docs;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -30,6 +35,7 @@
 		B5666AF2305AB9740048B1BE = {
 			isa = PBXGroup;
 			children = (
+				B5666B09305AB98E0048B1BE /* docs */,
 				B5666AFD305AB9740048B1BE /* Shot2Photos */,
 				B5666AFC305AB9740048B1BE /* Products */,
 			);
@@ -58,6 +64,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				B5666AFD305AB9740048B1BE /* Shot2Photos */,
+				B5666B09305AB98E0048B1BE /* docs */,
 			);
 			name = Shot2Photos;
 			productName = Shot2Photos;
