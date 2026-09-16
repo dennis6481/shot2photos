@@ -21,19 +21,19 @@ final class ScreenshotImportService {
     private var processedPaths = Set<String>()
     private var isStarted = false
 
+    var isMonitoring: Bool {
+        directoryMonitor != nil
+    }
+
+    var monitoredDirectoryPath: String? {
+        screenshotDirectoryURL()?.path
+    }
+
     func start() {
         guard !isStarted else { return }
         isStarted = true
 
         requestNotificationAuthorization()
-
-        Task { @MainActor [weak self] in
-            guard let self else { return }
-            let status = await self.photoLibraryAuthorization()
-            if status != .authorized && status != .limited {
-                NSLog("Shot2Photos: Photos access was not authorized.")
-            }
-        }
 
         guard let directoryURL = screenshotDirectoryURL() else {
             NSLog("Shot2Photos: Unable to determine the screenshot directory.")
@@ -43,6 +43,14 @@ final class ScreenshotImportService {
         initialPaths = snapshot(at: directoryURL)
         startMonitoring(directoryURL)
         NSLog("Shot2Photos: Monitoring %@", directoryURL.path)
+    }
+
+    func requestPhotoLibraryAuthorization() async -> PHAuthorizationStatus {
+        let status = await photoLibraryAuthorization()
+        if status != .authorized && status != .limited {
+            NSLog("Shot2Photos: Photos access was not authorized: %@", String(describing: status))
+        }
+        return status
     }
 
     private func screenshotDirectoryURL() -> URL? {
