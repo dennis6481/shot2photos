@@ -12,6 +12,32 @@ import UserNotifications
 
 @MainActor
 final class ScreenshotImportService {
+    private enum NotificationThumbnailError: LocalizedError {
+        case sourceImageUnreadable
+        case thumbnailCreationFailed
+        case cachesDirectoryUnavailable
+        case cacheDirectoryCreationFailed(domain: String, code: Int)
+        case destinationCreationFailed
+        case thumbnailFinalizeFailed
+
+        var errorDescription: String? {
+            switch self {
+            case .sourceImageUnreadable:
+                return "The source image could not be read by ImageIO."
+            case .thumbnailCreationFailed:
+                return "ImageIO could not create a thumbnail."
+            case .cachesDirectoryUnavailable:
+                return "The user caches directory is unavailable."
+            case let .cacheDirectoryCreationFailed(domain, code):
+                return "The notification thumbnail directory could not be created (domain=\(domain), code=\(code))."
+            case .destinationCreationFailed:
+                return "ImageIO could not create the PNG destination."
+            case .thumbnailFinalizeFailed:
+                return "ImageIO could not finalize the PNG thumbnail."
+            }
+        }
+    }
+
     private let fileManager = FileManager.default
     private let notificationCenter = UNUserNotificationCenter.current()
     private var directoryMonitor: DispatchSourceFileSystemObject?
@@ -61,17 +87,38 @@ final class ScreenshotImportService {
     }
 
     private func snapshot(at directoryURL: URL) -> Set<String> {
-        guard let urls = try? fileManager.contentsOfDirectory(
-            at: directoryURL,
-            includingPropertiesForKeys: [.isDirectoryKey],
-            options: [.skipsHiddenFiles]
-        ) else {
+        let urls: [URL]
+        do {
+            urls = try fileManager.contentsOfDirectory(
+                at: directoryURL,
+                includingPropertiesForKeys: [.isDirectoryKey],
+                options: [.skipsHiddenFiles]
+            )
+        } catch {
+            let nsError = error as NSError
+            NSLog(
+                "Shot2Photos: Unable to enumerate screenshot directory (domain=%@, code=%ld)",
+                nsError.domain,
+                nsError.code
+            )
             return []
         }
 
         return Set(urls.compactMap { url in
-            guard let values = try? url.resourceValues(forKeys: [.isDirectoryKey]),
-                  values.isDirectory != true else {
+            let values: URLResourceValues
+            do {
+                values = try url.resourceValues(forKeys: [.isDirectoryKey])
+            } catch {
+                let nsError = error as NSError
+                NSLog(
+                    "Shot2Photos: Unable to read screenshot entry metadata (domain=%@, code=%ld)",
+                    nsError.domain,
+                    nsError.code
+                )
+                return nil
+            }
+
+            guard values.isDirectory != true else {
                 return nil
             }
             return url.standardizedFileURL.path
@@ -108,11 +155,20 @@ final class ScreenshotImportService {
     }
 
     private func scanForNewFiles(in directoryURL: URL) {
-        guard let urls = try? fileManager.contentsOfDirectory(
-            at: directoryURL,
-            includingPropertiesForKeys: [.isDirectoryKey],
-            options: [.skipsHiddenFiles]
-        ) else {
+        let urls: [URL]
+        do {
+            urls = try fileManager.contentsOfDirectory(
+                at: directoryURL,
+                includingPropertiesForKeys: [.isDirectoryKey],
+                options: [.skipsHiddenFiles]
+            )
+        } catch {
+            let nsError = error as NSError
+            NSLog(
+                "Shot2Photos: Unable to scan screenshot directory (domain=%@, code=%ld)",
+                nsError.domain,
+                nsError.code
+            )
             return
         }
 
@@ -174,7 +230,18 @@ final class ScreenshotImportService {
 
         processedPaths.insert(path)
 
-        let attachmentURL = makeNotificationThumbnail(from: url)
+        let attachmentURL: URL?
+        do {
+            attachmentURL = try makeNotificationThumbnail(from: url)
+            NSLog("Shot2Photos: Notification thumbnail generated")
+        } catch {
+            NSLog(
+                "Shot2Photos: Notification thumbnail generation failed: %@",
+                error.localizedDescription
+            )
+            attachmentURL = nil
+        }
+
         sendNotification(
             title: "Screenshot imported",
             body: "The screenshot was added to Photos.",
@@ -195,9 +262,26 @@ final class ScreenshotImportService {
         var stableChecks = 0
 
         for _ in 0..<12 {
-            guard fileManager.fileExists(atPath: url.path),
-                  let values = try? url.resourceValues(forKeys: [.fileSizeKey]),
-                  let size = values.fileSize else {
+            guard fileManager.fileExists(atPath: url.path) else {
+                NSLog("Shot2Photos: Screenshot file disappeared during readiness check")
+                return false
+            }
+
+            let values: URLResourceValues
+            do {
+                values = try url.resourceValues(forKeys: [.fileSizeKey])
+            } catch {
+                let nsError = error as NSError
+                NSLog(
+                    "Shot2Photos: Unable to read screenshot file metadata (domain=%@, code=%ld)",
+                    nsError.domain,
+                    nsError.code
+                )
+                return false
+            }
+
+            guard let size = values.fileSize else {
+                NSLog("Shot2Photos: Screenshot file size is unavailable")
                 return false
             }
 
@@ -211,7 +295,19 @@ final class ScreenshotImportService {
             }
 
             previousSize = size
-            try? await Task.sleep(nanoseconds: 250_000_000)
+            do {
+                try await Task.sleep(nanoseconds: 250_000_000)
+            } catch is CancellationError {
+                return false
+            } catch {
+                let nsError = error as NSError
+                NSLog(
+                    "Shot2Photos: Screenshot readiness wait failed (domain=%@, code=%ld)",
+                    nsError.domain,
+                    nsError.code
+                )
+                return false
+            }
         }
 
         return false
@@ -266,23 +362,26 @@ final class ScreenshotImportService {
         }
     }
 
-    private func makeNotificationThumbnail(from sourceURL: URL) -> URL? {
+    private func makeNotificationThumbnail(from sourceURL: URL) throws -> URL {
         let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
-        guard let imageSource = CGImageSourceCreateWithURL(sourceURL as CFURL, sourceOptions),
-              let image = CGImageSourceCreateThumbnailAtIndex(
-                imageSource,
-                0,
-                [
-                    kCGImageSourceCreateThumbnailFromImageAlways: true,
-                    kCGImageSourceThumbnailMaxPixelSize: 512,
-                    kCGImageSourceCreateThumbnailWithTransform: true
-                ] as CFDictionary
-              ) else {
-            return nil
+        guard let imageSource = CGImageSourceCreateWithURL(sourceURL as CFURL, sourceOptions) else {
+            throw NotificationThumbnailError.sourceImageUnreadable
+        }
+
+        guard let image = CGImageSourceCreateThumbnailAtIndex(
+            imageSource,
+            0,
+            [
+                kCGImageSourceCreateThumbnailFromImageAlways: true,
+                kCGImageSourceThumbnailMaxPixelSize: 512,
+                kCGImageSourceCreateThumbnailWithTransform: true
+            ] as CFDictionary
+        ) else {
+            throw NotificationThumbnailError.thumbnailCreationFailed
         }
 
         guard let baseDirectory = fileManager.urls(for: .cachesDirectory, in: .userDomainMask).first else {
-            return nil
+            throw NotificationThumbnailError.cachesDirectoryUnavailable
         }
 
         let directoryURL = baseDirectory
@@ -298,17 +397,24 @@ final class ScreenshotImportService {
                 1,
                 nil
             ) else {
-                return nil
+                throw NotificationThumbnailError.destinationCreationFailed
             }
 
             CGImageDestinationAddImage(destination, image, nil)
             guard CGImageDestinationFinalize(destination) else {
-                return nil
+                throw NotificationThumbnailError.thumbnailFinalizeFailed
             }
             return destinationURL
         } catch {
-            NSLog("Shot2Photos: Unable to create notification thumbnail: %@", error.localizedDescription)
-            return nil
+            if let thumbnailError = error as? NotificationThumbnailError {
+                throw thumbnailError
+            }
+
+            let nsError = error as NSError
+            throw NotificationThumbnailError.cacheDirectoryCreationFailed(
+                domain: nsError.domain,
+                code: nsError.code
+            )
         }
     }
 
@@ -316,12 +422,26 @@ final class ScreenshotImportService {
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
-        if let attachmentURL,
-           let attachment = try? UNNotificationAttachment(
-            identifier: UUID().uuidString,
-            url: attachmentURL
-        ) {
-            content.attachments = [attachment]
+        if let attachmentURL {
+            do {
+                let attachment = try UNNotificationAttachment(
+                    identifier: UUID().uuidString,
+                    url: attachmentURL,
+                    options: [
+                        UNNotificationAttachmentOptionsTypeHintKey: UTType.png.identifier,
+                        UNNotificationAttachmentOptionsThumbnailHiddenKey: false
+                    ]
+                )
+                content.attachments = [attachment]
+                NSLog("Shot2Photos: Notification attachment created type=%@", attachment.type)
+            } catch {
+                let nsError = error as NSError
+                NSLog(
+                    "Shot2Photos: Notification attachment creation failed; sending without attachment (domain=%@, code=%ld)",
+                    nsError.domain,
+                    nsError.code
+                )
+            }
         }
 
         let request = UNNotificationRequest(
@@ -333,6 +453,10 @@ final class ScreenshotImportService {
         Task {
             do {
                 try await notificationCenter.add(request)
+                NSLog(
+                    "Shot2Photos: Notification scheduled withAttachment=%@",
+                    content.attachments.isEmpty ? "false" : "true"
+                )
             } catch {
                 NSLog("Shot2Photos: Notification delivery failed: %@", error.localizedDescription)
             }
