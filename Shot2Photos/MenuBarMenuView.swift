@@ -16,7 +16,7 @@ struct MenuBarMenuView: View {
 
         Divider()
 
-        Button("Quit Shot2Photos") {
+        Button("Quit \(shot2PhotosDisplayName)") {
             exit(EXIT_SUCCESS)
         }
     }

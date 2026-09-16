@@ -10,6 +10,10 @@ private let appLogger = Logger(
     category: "App"
 )
 
+let shot2PhotosDisplayName = Bundle.main.object(
+    forInfoDictionaryKey: "CFBundleDisplayName"
+) as? String ?? "Shot2Photos"
+
 @main
 struct Shot2PhotosApp: App {
     let importService = ScreenshotImportService()
@@ -23,7 +27,7 @@ struct Shot2PhotosApp: App {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 18, height: 18)
-                .accessibilityLabel("Shot2Photos")
+                .accessibilityLabel(shot2PhotosDisplayName)
         }
         .menuBarExtraStyle(.menu)
 
