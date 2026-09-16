@@ -1,0 +1,22 @@
+# Xcode user data and build products
+.DS_Store
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# Swift Package Manager and test artifacts
+.build/
+Package.resolved
+
+# Local signing and profiling artifacts
+*.mobileprovision
+*.profdata
+
+# macOS temporary files
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+AGENTS.md
