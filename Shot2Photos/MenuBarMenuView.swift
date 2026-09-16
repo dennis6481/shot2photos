@@ -2,22 +2,19 @@
 //  MenuBarMenuView.swift
 //
 
-import AppKit
+import Darwin
 import SwiftUI
 
 struct MenuBarMenuView: View {
-    @Environment(\.openSettings) private var openSettings
-
     var body: some View {
-        Button("Settings…") {
-            NSApp.activate(ignoringOtherApps: true)
-            openSettings()
+        SettingsLink {
+            Text("Settings…")
         }
 
         Divider()
 
         Button("Quit Shot2Photos") {
-            NSApplication.shared.terminate(nil)
+            exit(EXIT_SUCCESS)
         }
     }
 }

@@ -2,7 +2,6 @@
 //  SettingsView.swift
 //
 
-import AppKit
 import OSLog
 import Photos
 import SwiftUI
@@ -17,6 +16,7 @@ private let settingsLogger = Logger(
 struct SettingsView: View {
     let service: ScreenshotImportService
 
+    @Environment(\.openURL) private var openURL
     @AppStorage("removeSourceAfterImport") private var removeSourceAfterImport = false
     @State private var photoAuthorization = PHPhotoLibrary.authorizationStatus(for: .addOnly)
     @State private var notificationAuthorization: UNAuthorizationStatus = .notDetermined
@@ -70,6 +70,9 @@ struct SettingsView: View {
             settingsLogger.info("SettingsView appeared")
             refreshStatus()
         }
+        .task {
+            service.start()
+        }
     }
 
     private var photoAccessIsAvailable: Bool {
@@ -120,7 +123,13 @@ struct SettingsView: View {
     }
 
     private func refreshStatus() {
-        photoAuthorization = PHPhotoLibrary.authorizationStatus(for: .addOnly)
+        let addOnlyStatus = PHPhotoLibrary.authorizationStatus(for: .addOnly)
+
+        settingsLogger.info(
+            "Photos authorization refresh: addOnly=\(String(describing: addOnlyStatus), privacy: .public), bundleID=\(Bundle.main.bundleIdentifier ?? "nil", privacy: .public)"
+        )
+
+        photoAuthorization = addOnlyStatus
 
         Task {
             notificationAuthorization = await currentNotificationAuthorization()
@@ -149,18 +158,11 @@ struct SettingsView: View {
     }
 
     private func openSystemSettings(_ strings: [String]) {
-        for string in strings {
-            guard let url = URL(string: string) else {
-                continue
-            }
-            if NSWorkspace.shared.open(url) {
-                return
-            }
+        guard let url = strings.compactMap(URL.init(string:)).first else {
+            return
         }
 
-        NSWorkspace.shared.open(
-            URL(fileURLWithPath: "/System/Applications/System Settings.app")
-        )
+        openURL(url)
     }
 }
 

@@ -2,7 +2,6 @@
 //  Shot2PhotosApp.swift
 //
 
-import AppKit
 import OSLog
 import SwiftUI
 
@@ -13,7 +12,7 @@ private let appLogger = Logger(
 
 @main
 struct Shot2PhotosApp: App {
-    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    let importService = ScreenshotImportService()
 
     var body: some Scene {
         MenuBarExtra("Shot2Photos", systemImage: "photo.on.rectangle") {
@@ -22,17 +21,8 @@ struct Shot2PhotosApp: App {
         .menuBarExtraStyle(.menu)
 
         Settings {
-            SettingsView(service: appDelegate.importService)
+            SettingsView(service: importService)
         }
-    }
-}
-
-@MainActor
-final class AppDelegate: NSObject, NSApplicationDelegate {
-    let importService = ScreenshotImportService()
-
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        appLogger.info("Application did finish launching")
-        importService.start()
+        .defaultLaunchBehavior(.presented)
     }
 }

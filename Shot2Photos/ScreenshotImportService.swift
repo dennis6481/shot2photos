@@ -2,7 +2,6 @@
 //  ScreenshotImportService.swift
 //
 
-import AppKit
 import CoreServices
 import Darwin
 import Foundation
@@ -47,6 +46,10 @@ final class ScreenshotImportService {
 
     func requestPhotoLibraryAuthorization() async -> PHAuthorizationStatus {
         let status = await photoLibraryAuthorization()
+        NSLog(
+            "Shot2Photos: Photos authorization result addOnly=%@",
+            String(describing: status)
+        )
         if status != .authorized && status != .limited {
             NSLog("Shot2Photos: Photos access was not authorized: %@", String(describing: status))
         }
@@ -229,13 +232,9 @@ final class ScreenshotImportService {
             return false
         }
 
-        guard let image = NSImage(contentsOf: url) else {
-            return false
-        }
-
         return await withCheckedContinuation { continuation in
             PHPhotoLibrary.shared().performChanges({
-                PHAssetChangeRequest.creationRequestForAsset(from: image)
+                _ = PHAssetChangeRequest.creationRequestForAssetFromImage(atFileURL: url)
             }, completionHandler: { success, error in
                 if let error {
                     NSLog("Shot2Photos: Photos import failed: %@", error.localizedDescription)
