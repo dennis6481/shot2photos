@@ -1,24 +1,20 @@
 //
 //  ContentView.swift
-//  Shot2Photos
-//
-//  Created by Rui Ma on 16/09/2026.
 //
 
+import AppKit
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
-}
+    @AppStorage("removeSourceAfterImport") private var removeSourceAfterImport = false
 
-#Preview {
-    ContentView()
+    var body: some View {
+        Toggle("Move originals to Trash after import", isOn: $removeSourceAfterImport)
+
+        Divider()
+
+        Button("Quit Shot2Photos") {
+            NSApplication.shared.terminate(nil)
+        }
+    }
 }

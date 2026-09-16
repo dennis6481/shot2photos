@@ -1,17 +1,27 @@
 //
 //  Shot2PhotosApp.swift
-//  Shot2Photos
-//
-//  Created by Rui Ma on 16/09/2026.
 //
 
+import AppKit
 import SwiftUI
 
 @main
 struct Shot2PhotosApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+
     var body: some Scene {
-        WindowGroup {
+        MenuBarExtra("Shot2Photos", systemImage: "photo.on.rectangle") {
             ContentView()
         }
+        .menuBarExtraStyle(.menu)
+    }
+}
+
+@MainActor
+final class AppDelegate: NSObject, NSApplicationDelegate {
+    private let importService = ScreenshotImportService()
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        importService.start()
     }
 }
