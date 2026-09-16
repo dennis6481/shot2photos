@@ -19,7 +19,6 @@
 /* Begin PBXFileReference section */
 		B5D46137305B374E00771AF8 /* Shot2Photos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Shot2Photos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5D76B24305AEF7D0052D153 /* Shot2PhotosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Shot2PhotosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B5D76B86305B04D00052D153 /* Shot2Photos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Shot2Photos.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -67,7 +66,6 @@
 			children = (
 				B5666AFD305AB9740048B1BE /* Shot2Photos */,
 				B5D76B25305AEF7D0052D153 /* Shot2PhotosTests */,
-				B5D76B86305B04D00052D153 /* Shot2Photos.entitlements */,
 				B5D46137305B374E00771AF8 /* Shot2Photos.app */,
 				B5D76B24305AEF7D0052D153 /* Shot2PhotosTests.xctest */,
 			);
@@ -318,7 +316,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				AUTOMATION_APPLE_EVENTS = NO;
-				CODE_SIGN_ENTITLEMENTS = Shot2Photos.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Shot2Photos/Shot2Photos.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -371,7 +369,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				AUTOMATION_APPLE_EVENTS = NO;
-				CODE_SIGN_ENTITLEMENTS = Shot2Photos.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Shot2Photos/Shot2Photos.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;

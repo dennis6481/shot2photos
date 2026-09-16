@@ -10,6 +10,9 @@
   <a href="https://github.com/dennis6481/shot2photos/releases/latest">
     <img src="https://img.shields.io/github/v/release/dennis6481/shot2photos?display_name=tag&sort=semver&style=for-the-badge&label=Download%20latest%20release" alt="Download latest release">
   </a>
+  <a href="https://github.com/dennis6481/shot2photos/releases/latest">
+    <img src="https://img.shields.io/badge/macOS-Apple%20notarized-2ea44f?style=flat" alt="Apple notarized">
+  </a>
 </p>
 
 
