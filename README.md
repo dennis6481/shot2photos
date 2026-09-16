@@ -6,6 +6,13 @@
 
 <p align="center">Automatically import macOS screenshots into Apple Photos.</p>
 
+<p align="center">
+  <a href="https://github.com/dennis6481/shot2photos/releases/latest">
+    <img src="https://img.shields.io/github/v/release/dennis6481/shot2photos?display_name=tag&sort=semver&style=for-the-badge&label=Download%20latest%20release" alt="Download latest release">
+  </a>
+</p>
+
+
 Shot2Photos is a lightweight native macOS utility that imports system screenshots taken with `⌘⇧3`, `⌘⇧4`, and `⌘⇧5` into Apple Photos. It is particularly useful if you have iCloud Photos enabled.
 
 ```mermaid
