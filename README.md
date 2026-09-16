@@ -75,3 +75,10 @@ flowchart TD
 The original screenshot is moved to the Trash only after PhotoKit has explicitly confirmed that the image was successfully imported.
 
 Notification delivery is independent of the import process. If notifications are disabled or a notification cannot be delivered, this does not affect the Photos import or cause the screenshot to be processed again.
+
+## License
+
+Shot2Photos is licensed under the GNU General Public License v3.0 or later.
+See [LICENSE](LICENSE).
+
+Copyright (C) 2026 Rui Ma
