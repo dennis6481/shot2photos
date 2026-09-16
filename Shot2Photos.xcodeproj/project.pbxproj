@@ -6,19 +6,44 @@
 	objectVersion = 110;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		B5D76B28305AEF7D0052D153 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B5666AF3305AB9740048B1BE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B5666AFA305AB9740048B1BE;
+			remoteInfo = Shot2Photos;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
-		B5666AFB305AB9740048B1BE /* Shot2Photos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Shot2Photos.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B5D46137305B374E00771AF8 /* Shot2Photos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Shot2Photos.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B5D76B24305AEF7D0052D153 /* Shot2PhotosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Shot2PhotosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B5D76B86305B04D00052D153 /* Shot2Photos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Shot2Photos.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		B5D46136305B36B300771AF8 /* Exceptions for "Shot2Photos" folder in "Shot2PhotosTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AppIcon.icon,
+			);
+			target = B5D76B23305AEF7D0052D153 /* Shot2PhotosTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B5666AFD305AB9740048B1BE /* Shot2Photos */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B5D46136305B36B300771AF8 /* Exceptions for "Shot2Photos" folder in "Shot2PhotosTests" target */,
+			);
 			path = Shot2Photos;
 			sourceTree = "<group>";
 		};
-		B5666B09305AB98E0048B1BE /* docs */ = {
+		B5D76B25305AEF7D0052D153 /* Shot2PhotosTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = docs;
+			path = Shot2PhotosTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -29,24 +54,23 @@
 			files = (
 			);
 		};
+		B5D76B21305AEF7D0052D153 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		B5666AF2305AB9740048B1BE = {
 			isa = PBXGroup;
 			children = (
-				B5666B09305AB98E0048B1BE /* docs */,
 				B5666AFD305AB9740048B1BE /* Shot2Photos */,
-				B5666AFC305AB9740048B1BE /* Products */,
+				B5D76B25305AEF7D0052D153 /* Shot2PhotosTests */,
+				B5D76B86305B04D00052D153 /* Shot2Photos.entitlements */,
+				B5D46137305B374E00771AF8 /* Shot2Photos.app */,
+				B5D76B24305AEF7D0052D153 /* Shot2PhotosTests.xctest */,
 			);
-			sourceTree = "<group>";
-		};
-		B5666AFC305AB9740048B1BE /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				B5666AFB305AB9740048B1BE /* Shot2Photos.app */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -64,12 +88,32 @@
 			);
 			fileSystemSynchronizedGroups = (
 				B5666AFD305AB9740048B1BE /* Shot2Photos */,
-				B5666B09305AB98E0048B1BE /* docs */,
 			);
 			name = Shot2Photos;
 			productName = Shot2Photos;
-			productReference = B5666AFB305AB9740048B1BE /* Shot2Photos.app */;
+			productReference = B5D46137305B374E00771AF8 /* Shot2Photos.app */;
 			productType = "com.apple.product-type.application";
+		};
+		B5D76B23305AEF7D0052D153 /* Shot2PhotosTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B5D76B2C305AEF7D0052D153 /* Build configuration list for PBXNativeTarget "Shot2PhotosTests" */;
+			buildPhases = (
+				B5D76B20305AEF7D0052D153 /* Sources */,
+				B5D76B21305AEF7D0052D153 /* Frameworks */,
+				B5D76B22305AEF7D0052D153 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B5D76B29305AEF7D0052D153 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				B5D76B25305AEF7D0052D153 /* Shot2PhotosTests */,
+			);
+			name = Shot2PhotosTests;
+			productName = Shot2PhotosTests;
+			productReference = B5D76B24305AEF7D0052D153 /* Shot2PhotosTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -84,6 +128,10 @@
 					B5666AFA305AB9740048B1BE = {
 						CreatedOnToolsVersion = 27.0;
 					};
+					B5D76B23305AEF7D0052D153 = {
+						CreatedOnToolsVersion = 27.0;
+						TestTargetID = B5666AFA305AB9740048B1BE;
+					};
 				};
 			};
 			buildConfigurationList = B5666AF6305AB9740048B1BE /* Build configuration list for PBXProject "Shot2Photos" */;
@@ -96,17 +144,23 @@
 			mainGroup = B5666AF2305AB9740048B1BE;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = B5666AFC305AB9740048B1BE /* Products */;
+			productRefGroup = B5666AF2305AB9740048B1BE;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				B5666AFA305AB9740048B1BE /* Shot2Photos */,
+				B5D76B23305AEF7D0052D153 /* Shot2PhotosTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B5666AF9305AB9740048B1BE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		B5D76B22305AEF7D0052D153 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
 			);
@@ -119,7 +173,20 @@
 			files = (
 			);
 		};
+		B5D76B20305AEF7D0052D153 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B5D76B29305AEF7D0052D153 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B5666AFA305AB9740048B1BE /* Shot2Photos */;
+			targetProxy = B5D76B28305AEF7D0052D153 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		B5666B04305AB9750048B1BE /* Debug configuration for PBXProject "Shot2Photos" */ = {
@@ -180,6 +247,7 @@
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "Shot2Photos-beta";
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -237,6 +305,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 27.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = Shot2Photos;
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
 			};
@@ -247,30 +316,51 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				AUTOMATION_APPLE_EVENTS = NO;
+				CODE_SIGN_ENTITLEMENTS = Shot2Photos.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_TEAM = 6SQCAPYZW7;
-				ENABLE_APP_SANDBOX = YES;
+				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Shot2Photos-beta";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Shot2Photos adds system screenshots to your Photos library.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.rui.Shot2Photos;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rui.Shot2Photos-beta";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
+				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
+				RUNTIME_EXCEPTION_ALLOW_JIT = NO;
+				RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY = NO;
+				RUNTIME_EXCEPTION_DEBUGGING_TOOL = NO;
+				RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION = NO;
+				RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION = NO;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
 		};
@@ -279,30 +369,103 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				AUTOMATION_APPLE_EVENTS = NO;
+				CODE_SIGN_ENTITLEMENTS = Shot2Photos.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_TEAM = 6SQCAPYZW7;
-				ENABLE_APP_SANDBOX = YES;
+				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_RESOURCE_ACCESS_AUDIO_INPUT = NO;
+				ENABLE_RESOURCE_ACCESS_CALENDARS = NO;
+				ENABLE_RESOURCE_ACCESS_CAMERA = NO;
+				ENABLE_RESOURCE_ACCESS_CONTACTS = NO;
+				ENABLE_RESOURCE_ACCESS_LOCATION = NO;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Shot2Photos;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Shot2Photos adds system screenshots to your Photos library.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.rui.Shot2Photos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
+				RUNTIME_EXCEPTION_ALLOW_DYLD_ENVIRONMENT_VARIABLES = NO;
+				RUNTIME_EXCEPTION_ALLOW_JIT = NO;
+				RUNTIME_EXCEPTION_ALLOW_UNSIGNED_EXECUTABLE_MEMORY = NO;
+				RUNTIME_EXCEPTION_DEBUGGING_TOOL = NO;
+				RUNTIME_EXCEPTION_DISABLE_EXECUTABLE_PAGE_PROTECTION = NO;
+				RUNTIME_EXCEPTION_DISABLE_LIBRARY_VALIDATION = NO;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		B5D76B2A305AEF7D0052D153 /* Debug configuration for PBXNativeTarget "Shot2PhotosTests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 16;
+				DEVELOPMENT_TEAM = 6SQCAPYZW7;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rui.Shot2PhotosTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Shot2Photos.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Shot2Photos";
+				XROS_DEPLOYMENT_TARGET = 27.0;
+			};
+			name = Debug;
+		};
+		B5D76B2B305AEF7D0052D153 /* Release configuration for PBXNativeTarget "Shot2PhotosTests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 16;
+				DEVELOPMENT_TEAM = 6SQCAPYZW7;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.rui.Shot2PhotosTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Shot2Photos.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Shot2Photos";
+				XROS_DEPLOYMENT_TARGET = 27.0;
 			};
 			name = Release;
 		};
@@ -322,6 +485,14 @@
 			buildConfigurations = (
 				B5666B07305AB9750048B1BE /* Debug configuration for PBXNativeTarget "Shot2Photos" */,
 				B5666B08305AB9750048B1BE /* Release configuration for PBXNativeTarget "Shot2Photos" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		B5D76B2C305AEF7D0052D153 /* Build configuration list for PBXNativeTarget "Shot2PhotosTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B5D76B2A305AEF7D0052D153 /* Debug configuration for PBXNativeTarget "Shot2PhotosTests" */,
+				B5D76B2B305AEF7D0052D153 /* Release configuration for PBXNativeTarget "Shot2PhotosTests" */,
 			);
 			defaultConfigurationName = Release;
 		};
