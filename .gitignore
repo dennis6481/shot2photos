@@ -2,6 +2,7 @@
 .DS_Store
 build/
 DerivedData/
+dist/
 *.xcuserstate
 xcuserdata/
 
@@ -20,3 +21,10 @@ Icon
 ._*
 
 AGENTS.md
+
+
+*.p12
+*.p8
+*.pem
+*.key
+.env*

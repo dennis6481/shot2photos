@@ -76,6 +76,30 @@ The original screenshot is moved to the Trash only after PhotoKit has explicitly
 
 Notification delivery is independent of the import process. If notifications are disabled or a notification cannot be delivered, this does not affect the Photos import or cause the screenshot to be processed again.
 
+## Automated releases
+
+Pushing a version tag such as `v1.0.0` starts the GitHub Actions release workflow. It archives the macOS app, signs it with Developer ID, creates a DMG, submits the DMG for notarization, staples the notarization ticket, and uploads the result to a GitHub Release.
+
+Configure these repository Actions secrets before creating the first release:
+
+| Secret | Value |
+| --- | --- |
+| `DEVELOPER_ID_CERTIFICATE_BASE64` | Base64-encoded `.p12` containing the Developer ID Application certificate and private key |
+| `DEVELOPER_ID_CERTIFICATE_PASSWORD` | Password used when exporting the `.p12` |
+| `APPLE_TEAM_ID` | Apple Developer Team ID |
+| `APPLE_API_KEY_ID` | App Store Connect API key ID used by `notarytool` |
+| `APPLE_API_ISSUER_ID` | App Store Connect API issuer ID |
+| `APPLE_API_PRIVATE_KEY_BASE64` | Base64-encoded App Store Connect API `.p8` private key |
+
+After the secrets are configured:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+The workflow uses the Xcode 27 GitHub Actions runner because the app icon is stored as the Icon Composer package `AppIconFile.icon`.
+
 ## License
 
 Shot2Photos is licensed under the GNU General Public License v3.0 or later.

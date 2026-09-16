@@ -233,12 +233,7 @@ final class ScreenshotImportService {
         let attachmentURL: URL?
         do {
             attachmentURL = try makeNotificationThumbnail(from: url)
-            NSLog("Shot2Photos: Notification thumbnail generated")
         } catch {
-            NSLog(
-                "Shot2Photos: Notification thumbnail generation failed: %@",
-                error.localizedDescription
-            )
             attachmentURL = nil
         }
 
@@ -355,11 +350,7 @@ final class ScreenshotImportService {
     }
 
     private func requestNotificationAuthorization() {
-        notificationCenter.requestAuthorization(options: [.alert, .sound]) { _, error in
-            if let error {
-                NSLog("Shot2Photos: Notification authorization unavailable: %@", error.localizedDescription)
-            }
-        }
+        notificationCenter.requestAuthorization(options: [.alert, .sound]) { _, _ in }
     }
 
     private func makeNotificationThumbnail(from sourceURL: URL) throws -> URL {
@@ -433,14 +424,8 @@ final class ScreenshotImportService {
                     ]
                 )
                 content.attachments = [attachment]
-                NSLog("Shot2Photos: Notification attachment created type=%@", attachment.type)
             } catch {
-                let nsError = error as NSError
-                NSLog(
-                    "Shot2Photos: Notification attachment creation failed; sending without attachment (domain=%@, code=%ld)",
-                    nsError.domain,
-                    nsError.code
-                )
+                // Send the notification without an attachment when the thumbnail cannot be attached.
             }
         }
 
@@ -453,12 +438,8 @@ final class ScreenshotImportService {
         Task {
             do {
                 try await notificationCenter.add(request)
-                NSLog(
-                    "Shot2Photos: Notification scheduled withAttachment=%@",
-                    content.attachments.isEmpty ? "false" : "true"
-                )
             } catch {
-                NSLog("Shot2Photos: Notification delivery failed: %@", error.localizedDescription)
+                // Notification delivery failures do not affect the completed import.
             }
         }
     }
