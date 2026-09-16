@@ -15,8 +15,15 @@ struct Shot2PhotosApp: App {
     let importService = ScreenshotImportService()
 
     var body: some Scene {
-        MenuBarExtra("Shot2Photos", systemImage: "photo.on.rectangle") {
+        MenuBarExtra {
             MenuBarMenuView()
+        } label: {
+            Image("MenuBarIcon")
+                .renderingMode(.template)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 18, height: 18)
+                .accessibilityLabel("Shot2Photos")
         }
         .menuBarExtraStyle(.menu)
 
