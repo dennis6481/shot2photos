@@ -2,7 +2,6 @@
 //  ScreenshotImportService.swift
 //
 
-import CoreServices
 import Darwin
 import Foundation
 import ImageIO
@@ -40,6 +39,7 @@ final class ScreenshotImportService {
 
     private let fileManager = FileManager.default
     private let notificationCenter = UNUserNotificationCenter.current()
+    private let screenshotMetadataAttribute = "com.apple.metadata:kMDItemIsScreenCapture"
     private var directoryMonitor: DispatchSourceFileSystemObject?
     private var initialPaths = Set<String>()
     private var processingPaths = Set<String>()
@@ -184,6 +184,7 @@ final class ScreenshotImportService {
             }
 
             processingPaths.insert(path)
+            NSLog("Shot2Photos: Detected a new supported image")
             Task { @MainActor [weak self] in
                 await self?.process(url)
             }
@@ -214,8 +215,12 @@ final class ScreenshotImportService {
         let path = url.standardizedFileURL.path
         defer { processingPaths.remove(path) }
 
-        guard await waitUntilReady(url),
-              isSystemScreenshot(url) else {
+        guard await waitUntilReady(url) else {
+            NSLog("Shot2Photos: Skipping image because it did not become ready")
+            return
+        }
+
+        guard isSystemScreenshot(url) else {
             return
         }
 
@@ -309,15 +314,64 @@ final class ScreenshotImportService {
     }
 
     private func isSystemScreenshot(_ url: URL) -> Bool {
-        for _ in 0..<8 {
-            guard let item = MDItemCreate(kCFAllocatorDefault, url.path as CFString),
-                  let value = MDItemCopyAttribute(item, "kMDItemIsScreenCapture" as CFString) as? NSNumber else {
-                Thread.sleep(forTimeInterval: 0.25)
-                continue
+        let attributeData: Data? = url.withUnsafeFileSystemRepresentation { path in
+            guard let path else {
+                NSLog("Shot2Photos: Unable to represent screenshot file URL as a file system path")
+                return nil
             }
-            return value.boolValue
+
+            return screenshotMetadataAttribute.withCString { attributeName in
+                let attributeSize = getxattr(path, attributeName, nil, 0, 0, 0)
+                guard attributeSize >= 0 else {
+                    let errorCode = errno
+                    if errorCode != ENOATTR {
+                        NSLog("Shot2Photos: Unable to query screenshot metadata size (errno=%d)", errorCode)
+                    }
+                    return nil
+                }
+
+                guard attributeSize > 0 else { return nil }
+
+                var data = Data(count: attributeSize)
+                let bytesRead = data.withUnsafeMutableBytes { buffer in
+                    getxattr(path, attributeName, buffer.baseAddress, attributeSize, 0, 0)
+                }
+
+                guard bytesRead >= 0 else {
+                    let errorCode = errno
+                    if errorCode != ENOATTR {
+                        NSLog("Shot2Photos: Unable to read screenshot metadata (errno=%d)", errorCode)
+                    }
+                    return nil
+                }
+
+                guard bytesRead == attributeSize else {
+                    NSLog("Shot2Photos: Screenshot metadata size changed during read")
+                    return nil
+                }
+
+                return data
+            }
         }
-        return false
+
+        guard let attributeData else { return false }
+
+        do {
+            let value = try PropertyListSerialization.propertyList(
+                from: attributeData,
+                options: [],
+                format: nil
+            )
+            return (value as? NSNumber)?.boolValue == true
+        } catch {
+            let nsError = error as NSError
+            NSLog(
+                "Shot2Photos: Unable to decode screenshot metadata (domain=%@, code=%ld)",
+                nsError.domain,
+                nsError.code
+            )
+            return false
+        }
     }
 
     private func importIntoPhotos(_ url: URL) async -> Bool {
